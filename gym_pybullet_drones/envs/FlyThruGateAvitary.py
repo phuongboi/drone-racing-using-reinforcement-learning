@@ -52,7 +52,7 @@ class FlyThruGateAvitary(BaseRLAviary):
             The type of action space (1 or 3D; RPMS, thurst and torques, or waypoint with PID control)
 
         """
-        self.EPISODE_LEN_SEC = 12
+        self.EPISODE_LEN_SEC = 10
         super().__init__(drone_model=drone_model,
                          num_drones = 1,
                          initial_xyzs=initial_xyzs,
@@ -171,11 +171,11 @@ class FlyThruGateAvitary(BaseRLAviary):
                 print('trucated')
                 print(state[:3])
             return True
-        # if abs(state[7]) > .78 or abs(state[8]) > .78: # Truncate when the drone is too tilted
-        #     if self.passing_flag[0]:
-        #         print('trucated by tilted')
-        #         print(state[:3])
-        #     return True
+        if abs(state[7]) > 0.78 or abs(state[8]) > 0.78: # Truncate when the drone is too tilted
+            if self.passing_flag[0]:
+                print('trucated by tilted')
+                print(state[:3])
+            return True
         if self.step_counter/self.PYB_FREQ > self.EPISODE_LEN_SEC:
             return True
         else:
@@ -190,7 +190,8 @@ class FlyThruGateAvitary(BaseRLAviary):
             Whether the current episode is done.
 
         """
-        if  self.collide==True: #self.passing_flag[2] == True or
+        # just require to pass 3rd gate
+        if  self.passing_flag[2] == True or self.collide == True:
             return True
         else:
             return False

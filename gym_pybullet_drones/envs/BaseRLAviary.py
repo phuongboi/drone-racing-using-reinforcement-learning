@@ -202,7 +202,8 @@ class BaseRLAviary(BaseAviary):
             target = action[k, :]
             if self.ACT_TYPE == ActionType.RPM:
 
-                rpm[k,:] = np.array(self.HOVER_RPM * (1+0.1*target))
+                rpm[k,:] = np.array(self.HOVER_RPM * (1+0.1*target)) # need to tune
+
 
             elif self.ACT_TYPE == ActionType.PID:
                 state = self._getDroneStateVector(k)
@@ -321,15 +322,11 @@ class BaseRLAviary(BaseAviary):
         elif self.OBS_TYPE == ObservationType.KIN:
             ############################################################
             #### OBS SPACE OF SIZE 12
-            obs_12 = np.zeros((self.NUM_DRONES,12))
-            obs_18 = np.zeros((self.NUM_DRONES,18))
             for i in range(self.NUM_DRONES):
                 #obs = self._clipAndNormalizeState(self._getDroneStateVector(i))
                 obs = self._getDroneStateVector(i)
                 rot_matrix = np.array(p.getMatrixFromQuaternion(obs[3:7]))
-                #print(rot_matrix)
-                #obs_12[i, :] = np.hstack([obs[0:3], obs[7:10], obs[10:13], obs[13:16]]).reshape(12,)
-                #obs_18[i, :] = np.hstack([obs[0:3], obs[10:13], obs[13:16], rot_matrix]).reshape(18,)
+
                 obs_quad = list(obs[10:13]) # linear velocity
                 obs_quad.extend(rot_matrix)
                 assert len(obs_quad) == 12
@@ -343,18 +340,14 @@ class BaseRLAviary(BaseAviary):
                         for j in range(4):
                             relative_pos = np.array(self.racing_setup[key][j+1]) - obs[:3]
                             obs_quad.extend(relative_pos)
+
                     if len(obs_quad) >= 36: # 2 consecutive gate
                         break
-                obs_36 = np.expand_dims(np.array(obs_quad), axis=0)#.reshape(36,) # for racing
-            #print(obs_36.shape)
+                if self.passing_flag[3]:
+                    obs_36 = np.zeros((1,36)) # fake obs
+                else:
+                    obs_36 = np.expand_dims(np.array(obs_quad), axis=0)#.reshape(36,) # for racing
             ret = obs_36.astype('float32')
-            #ret = np.array([obs_36[i, :] for i in range(self.NUM_DRONES)]).astype('float32')
-            #ret = np.array([obs_18[i, :] for i in range(self.NUM_DRONES)]).astype('float32')
-            #### Add action buffer to observation #######################
-            # print(ret.shape)
-            # for i in range(self.ACTION_BUFFER_SIZE):
-            #     ret = np.hstack([ret, np.array([self.action_buffer[i][j, :] for j in range(self.NUM_DRONES)])])
-            # print(ret.shape)
 
             return ret
             ############################################################
