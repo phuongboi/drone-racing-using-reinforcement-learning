@@ -3,6 +3,7 @@
 - I refer paper [Reaching the Limit in Autonomous Racing](https://arxiv.org/abs/2310.10943) for the initial setting of reinforcement learning algorithm
 #### 25/09/2024 Initial result
 * I do initial experiments to figure out that does RL setting work in Gym Pybullet Drones environment (Updating)
+* My current result have difficulty to pass 3rd gate (terminal gate), you can change this constrain during training or testing to improve the outcome [line](https://github.com/phuongboi/drone-racing-using-reinforcement-learning/blob/a7bdbb084cba42631ea18c7ed3a9d13d9e418437/gym_pybullet_drones/envs/FlyThruGateAvitary.py#L174). Many other factors need to tune to achieve better result.
 
 ##### Using CrazyFly(X type) with simple racing setting
 
