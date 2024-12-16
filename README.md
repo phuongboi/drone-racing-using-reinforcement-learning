@@ -7,7 +7,7 @@
 
 ##### Using CrazyFly(X type) with simple racing setting
 
-![alt text](https://github.com/phuongboi/drone-racing-using-reinforcement-learning/blob/main/results/racing1.gif)
+![alt text](https://github.com/phuongboi/drone-racing-using-reinforcement-learning/blob/main/racing1.gif)
 
 #### How to use
 * Follow author's guide to install gym-pybullet-drones environment
